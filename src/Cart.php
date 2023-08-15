@@ -241,10 +241,11 @@ class Cart
      */
     public function total($decimals = null, $decimalPoint = null, $thousandSeperator = null)
     {
+        //bỏ * (1 - ($cartItem->options->discount)/100) nếu có lỗi xảy ra
         $content = $this->getContent();
 
         $total = $content->reduce(function ($total, CartItem $cartItem) {
-            return $total + ($cartItem->qty * $cartItem->priceTax);
+            return $total + ($cartItem->qty * $cartItem->priceTax * (1 - ($cartItem->options->discount)/100));
         }, 0);
 
         return $this->numberFormat($total, $decimals, $decimalPoint, $thousandSeperator);
@@ -282,7 +283,8 @@ class Cart
         $content = $this->getContent();
 
         $subTotal = $content->reduce(function ($subTotal, CartItem $cartItem) {
-            return $subTotal + ($cartItem->qty * $cartItem->price);
+            //bỏ * (1 - ($cartItem->options->discount)/100) nếu có lỗi xảy ra
+            return $subTotal + ($cartItem->qty * $cartItem->price * (1 - ($cartItem->options->discount)/100));
         }, 0);
 
         return $this->numberFormat($subTotal, $decimals, $decimalPoint, $thousandSeperator);
